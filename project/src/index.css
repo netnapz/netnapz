@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
+:root {
+  font-family: 'MedievalSharp', cursive;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #000000;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  animation: starsAnimation 120s linear infinite;
+}
+
+@keyframes starsAnimation {
+  from {
+    background-position: 0 0, 40px 60px, 130px 270px;
+  }
+  to {
+    background-position: 550px 550px, 390px 410px, 380px 520px;
+  }
+}
+
+.magic-text {
+  background: linear-gradient(to right, #c6ffdd, #fbd786, #f7797d);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.crystal-ball {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.crystal-ball::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, transparent 30%, rgba(255, 255, 255, 0.1) 100%);
+  animation: crystalGlow 4s ease-in-out infinite;
+}
+
+@keyframes crystalGlow {
+  0%, 100% { transform: translate(-25%, -25%) rotate(0deg); }
+  50% { transform: translate(-25%, -25%) rotate(180deg); }
+}
+
+.wizard-button {
+  background: rgba(76, 29, 149, 0.7);
+  border: 2px solid #8b5cf6;
+  color: white;
+  text-shadow: 0 0 5px #8b5cf6;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.wizard-button:hover {
+  background: rgba(76, 29, 149, 0.9);
+  box-shadow: 0 0 15px #8b5cf6;
+  transform: translateY(-2px);
+}
+
+.wizard-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.4) 0%, transparent 60%);
+  animation: buttonGlow 2s ease-in-out infinite;
+}
+
+@keyframes buttonGlow {
+  0%, 100% { transform: translate(-25%, -25%) rotate(0deg); }
+  50% { transform: translate(-25%, -25%) rotate(180deg); }
+}
