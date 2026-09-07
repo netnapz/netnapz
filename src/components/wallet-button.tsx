@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type EthereumProvider = {
   request(args: { method: string; params?: unknown[] }): Promise<unknown>;
@@ -21,20 +21,12 @@ export function WalletButton() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 
-  const sync = useCallback(async () => {
-    const wallet = provider();
-    if (!wallet) return;
-    const accounts = await wallet.request({ method: "eth_accounts" }) as string[];
-    setAccount(accounts[0] ?? "");
-  }, []);
-
   useEffect(() => {
-    void sync();
     const wallet = provider();
     const changed = (...args: unknown[]) => setAccount(((args[0] as string[]) ?? [])[0] ?? "");
     wallet?.on?.("accountsChanged", changed);
     return () => wallet?.removeListener?.("accountsChanged", changed);
-  }, [sync]);
+  }, []);
 
   async function connect() {
     const wallet = provider();
