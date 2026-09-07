@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { MarketSummary } from "@/lib/gmx/markets";
+import { PriceChart } from "@/components/price-chart";
+import type { MarketSummary, PriceCandle } from "@/lib/gmx/markets";
 
 const products = [
   ["Perpetuals", "Market, limit, stop and trigger orders", "FOUNDATION"],
@@ -13,7 +14,7 @@ function marketPath(symbol: string) {
   return symbol.toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-export function MarketTerminal({ markets, chain, selected }: { markets: MarketSummary[]; chain: string; selected: string }) {
+export function MarketTerminal({ markets, candles, chain, selected }: { markets: MarketSummary[]; candles: PriceCandle[]; chain: string; selected: string }) {
   const current = markets.find((market) => market.symbol.toUpperCase().includes(selected.split("-")[0])) ?? markets[0];
   return (
     <main className="terminal">
@@ -30,8 +31,8 @@ export function MarketTerminal({ markets, chain, selected }: { markets: MarketSu
       })}</section>
       <section className="workspace">
         <div className="chart-panel panel">
-          <div className="panel-title"><span>PRICE & MARKET DEPTH</span><span className="muted">Verified price series and liquidity depth: next release gate</span></div>
-          <div className="chart-empty"><div className="chart-badge">LIVE MARKET CATALOGUE</div><strong>{markets.length} GMX markets discovered dynamically</strong><span>No synthetic prices or placeholder candles are shown.</span></div>
+          <div className="panel-title"><span>VERIFIED PRICE SERIES</span><span className="muted">Official GMX hourly OHLCV</span></div>
+          <PriceChart candles={candles} />
         </div>
         <aside className="order-panel panel" aria-label="Order ticket preview">
           <div className="ticket-title"><span>ORDER TICKET</span><b>READ ONLY</b></div>
