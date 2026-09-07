@@ -1,0 +1,28 @@
+name: NetNapz Trade CI
+
+on:
+  pull_request:
+    paths: ["apps/trade/**", ".github/workflows/trade-ci.yml"]
+  push:
+    branches: [main, "feat/netnapz-trade"]
+    paths: ["apps/trade/**", ".github/workflows/trade-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/trade
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install --ignore-scripts
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
