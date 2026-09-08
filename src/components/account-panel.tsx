@@ -10,7 +10,7 @@ type AccountSnapshot = {
   trades: number;
 };
 
-type GmxChainId = 42161 | 43114 | 4326 | 43113 | 421614;
+export type GmxChainId = 42161 | 43114 | 4326 | 43113 | 421614;
 
 function countCollection(value: unknown): number {
   if (Array.isArray(value)) return value.length;
