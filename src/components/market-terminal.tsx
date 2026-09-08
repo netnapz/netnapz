@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PriceChart } from "@/components/price-chart";
+import { AccountPanel } from "@/components/account-panel";
 import type { MarketSummary, PriceCandle } from "@/lib/gmx/markets";
 
 const products = [
@@ -18,7 +19,7 @@ function requestedPair(selected: string) {
   return selected.split("-").slice(0, 2).join("/");
 }
 
-export function MarketTerminal({ markets, candles, chain, selected }: { markets: MarketSummary[]; candles: PriceCandle[]; chain: string; selected: string }) {
+export function MarketTerminal({ markets, candles, chain, chainId, selected }: { markets: MarketSummary[]; candles: PriceCandle[]; chain: string; chainId: number; selected: string }) {
   const pair = requestedPair(selected);
   const current = markets.find((market) => market.symbol.toUpperCase().split(" [")[0] === pair) ?? markets[0];
   return (
@@ -51,7 +52,7 @@ export function MarketTerminal({ markets, candles, chain, selected }: { markets:
         <div className="panel-title gold-title"><span>NETNAPZ MARKET INTELLIGENCE</span><span>VERIFIED EDITORIAL DATA ONLY</span></div>
         <div className="intel-grid">{["Bias", "Confirmation", "Invalidation", "Catalyst"].map((item) => <article key={item}><p>{item}</p><strong>Awaiting verified analysis</strong></article>)}</div>
       </section>
-      <section className="account panel" id="portfolio"><div className="tabs"><b>Positions</b><span id="orders">Orders</span><span id="history">Trades</span><span>Portfolio</span></div><p>Connect a wallet to authorize account-specific reads. NetNapz never requests a seed phrase or private key.</p></section>
+      <AccountPanel expectedChainId={chainId} />
     </main>
   );
 }
