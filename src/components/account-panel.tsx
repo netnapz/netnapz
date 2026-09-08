@@ -10,6 +10,8 @@ type AccountSnapshot = {
   trades: number;
 };
 
+type GmxChainId = 42161 | 43114 | 4326 | 43113 | 421614;
+
 function countCollection(value: unknown): number {
   if (Array.isArray(value)) return value.length;
   if (!value || typeof value !== "object") return 0;
@@ -20,7 +22,7 @@ function countCollection(value: unknown): number {
   return 0;
 }
 
-export function AccountPanel({ expectedChainId }: { expectedChainId: number }) {
+export function AccountPanel({ expectedChainId }: { expectedChainId: GmxChainId }) {
   const { account, chainId, connect } = useWallet();
   const [snapshot, setSnapshot] = useState<AccountSnapshot | null>(null);
   const [failed, setFailed] = useState(false);
