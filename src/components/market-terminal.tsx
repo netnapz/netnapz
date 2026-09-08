@@ -14,15 +14,20 @@ function marketPath(symbol: string) {
   return symbol.toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function requestedPair(selected: string) {
+  return selected.split("-").slice(0, 2).join("/");
+}
+
 export function MarketTerminal({ markets, candles, chain, selected }: { markets: MarketSummary[]; candles: PriceCandle[]; chain: string; selected: string }) {
-  const current = markets.find((market) => market.symbol.toUpperCase().includes(selected.split("-")[0])) ?? markets[0];
+  const pair = requestedPair(selected);
+  const current = markets.find((market) => market.symbol.toUpperCase().split(" [")[0] === pair) ?? markets[0];
   return (
     <main className="terminal">
       <section className="section-heading"><div><p className="eyebrow">NETNAPZ TRADE TERMINAL</p><h1>Decentralized markets, editorial clarity.</h1><p>All displayed instruments are discovered from the official GMX API for the selected network. Wallet connection is live; transaction signing remains gated while order previews and safety controls are built.</p></div><span className="network"><i />{chain}</span></section>
       <section className="network-picker" aria-label="GMX network">{networks.map(([label, slug]) => <Link className={chain === label ? "selected" : ""} key={slug} href={`/trade/${selected}?network=${slug}`}>{label}</Link>)}</section>
       <section className="capability-strip" aria-label="Product coverage">{products.map(([name, detail, status]) => <article key={name} id={name.toLowerCase()}><div><strong>{name}</strong><span>{detail}</span></div><b>{status}</b></article>)}</section>
       <section className="market-head">
-        <div><p className="eyebrow">SELECTED MARKET</p><h2>{current?.symbol ?? selected.replace("-", "/")}</h2></div>
+        <div><p className="eyebrow">SELECTED MARKET</p><h2>{current?.symbol ?? pair}</h2></div>
         <div className="market-meta"><span>{markets.length} markets discovered</span><span>Source: GMX SDK</span></div>
       </section>
       <section className="market-picker" aria-label="Available GMX markets">{markets.slice(0, 32).map((market) => {
