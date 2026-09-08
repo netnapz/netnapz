@@ -9,16 +9,26 @@ export default async function TradePage({ params, searchParams }: { params: Prom
   const [{ market }, query] = await Promise.all([params, searchParams]);
   const chain = getGmxChain(query.network ?? "arbitrum") ?? getGmxChain("arbitrum")!;
   const selected = market.toUpperCase();
+  const requestedSymbol = selected.split("-").slice(0, 2).join("/");
   let markets: MarketSummary[] = [];
   let candles: PriceCandle[] = [];
-  let error = false;
+  let marketError = false;
+  let priceError = false;
+
   try {
     markets = await fetchMarketCatalog(chain.id);
-    const requestedSymbol = selected.split("-").slice(0, 2).join("/");
+  } catch {
+    marketError = true;
+  }
+  try {
     candles = await fetchPriceCandles(chain.id, requestedSymbol);
   } catch {
-    error = true;
+    priceError = true;
   }
 
-  return <AppShell>{error && <div className="alert" role="alert">Some GMX market data is temporarily unavailable. No cached or fabricated price is being shown.</div>}<MarketTerminal markets={markets} candles={candles} chain={chain.label} selected={selected} /></AppShell>;
+  return <AppShell>
+    {marketError && <div className="alert" role="alert">GMX market catalogue is temporarily unavailable. No substitute markets are shown.</div>}
+    {priceError && <div className="alert" role="alert">GMX price history is temporarily unavailable. No cached or fabricated price is shown.</div>}
+    <MarketTerminal markets={markets} candles={candles} chain={chain.label} selected={selected} />
+  </AppShell>;
 }
