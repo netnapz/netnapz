@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type EthereumProvider = {
   request(args: { method: string; params?: unknown[] }): Promise<unknown>;
@@ -68,8 +68,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const value = useMemo(() => ({ account, chainId, busy, message, connect }), [account, chainId, busy, message]);
-  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
+  return <WalletContext.Provider value={{ account, chainId, busy, message, connect }}>{children}</WalletContext.Provider>;
 }
 
 export function useWallet() {
