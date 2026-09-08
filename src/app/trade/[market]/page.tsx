@@ -29,6 +29,6 @@ export default async function TradePage({ params, searchParams }: { params: Prom
   return <AppShell>
     {marketError && <div className="alert" role="alert">GMX market catalogue is temporarily unavailable. No substitute markets are shown.</div>}
     {priceError && <div className="alert" role="alert">GMX price history is temporarily unavailable. No cached or fabricated price is shown.</div>}
-    <MarketTerminal markets={markets} candles={candles} chain={chain.label} selected={selected} />
+    <MarketTerminal markets={markets} candles={candles} chain={chain.label} chainId={chain.id} selected={selected} />
   </AppShell>;
 }
