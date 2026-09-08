@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PriceChart } from "@/components/price-chart";
-import { AccountPanel } from "@/components/account-panel";
+import { AccountPanel, type GmxChainId } from "@/components/account-panel";
 import type { MarketSummary, PriceCandle } from "@/lib/gmx/markets";
 
 const products = [
@@ -19,7 +19,7 @@ function requestedPair(selected: string) {
   return selected.split("-").slice(0, 2).join("/");
 }
 
-export function MarketTerminal({ markets, candles, chain, chainId, selected }: { markets: MarketSummary[]; candles: PriceCandle[]; chain: string; chainId: number; selected: string }) {
+export function MarketTerminal({ markets, candles, chain, chainId, selected }: { markets: MarketSummary[]; candles: PriceCandle[]; chain: string; chainId: GmxChainId; selected: string }) {
   const pair = requestedPair(selected);
   const current = markets.find((market) => market.symbol.toUpperCase().split(" [")[0] === pair) ?? markets[0];
   return (
