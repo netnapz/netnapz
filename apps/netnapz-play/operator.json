@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "operatorApproved": false,
+  "operatorName": "",
+  "ukgcAccountNumber": "",
+  "jurisdiction": "GB",
+  "mode": "iframe",
+  "operatorOrigin": "",
+  "launchUrls": {
+    "sportsbook": "",
+    "casino": ""
+  }
+}

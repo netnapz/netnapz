@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1020"><meta name="description" content="NetNapz Play — operator-hosted gaming integration.">
+<title>NetNapz Play | A new experience</title><link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./styles.css"><script src="./app.js" defer></script>
+</head><body>
+<div class="strip"></div>
+<header class="header"><div class="header-inner">
+<a class="logo" href="https://netnapz.com"><span class="logo-mark">N<span>✦</span></span><span>NETNAPZ <b>PLAY</b></span></a>
+<nav><a href="#experience">Experience</a><a href="#how">How it works</a><a href="#safer">Safer play</a></nav>
+<a class="back-link" href="https://netnapz.com">NetNapz.com <span>↗</span></a>
+</div></header>
+<main>
+<div class="banner" role="status"><span class="dot"></span><b id="banner-title">Preview environment</b><span id="banner-message">An authorised gambling operator has not yet been connected.</span><small>18+ · GB</small></div>
+<section class="hero"><div class="hero-copy">
+<p class="kicker">✦ THE NEXT NETNAPZ EXPERIENCE</p><h1>Play in your<br><em>own lane.</em></h1>
+<p class="lead">Your NetNapz brand, connected to one licensed gambling operator. The operator handles accounts, deposits, bets, payouts and customer protections.</p>
+<div class="buttons"><a href="#experience" class="btn btn-primary">Explore the platform <span>↗</span></a><a href="#how" class="btn btn-outline">How it works</a></div>
+<div class="hero-foot">◇ No real-money gambling is available in this preview.</div>
+</div><div class="art" aria-hidden="true"><div class="halo"></div><div class="art-back"><div class="art-line">NETNAPZ <span>•••</span></div><div class="art-bars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="art-front"><div class="art-line">NETNAPZ PLAY <span>✧</span></div><div class="art-n">N<span>✦</span></div><div class="art-bottom">CONNECTED EXPERIENCES <span>●●●</span></div></div></div></section>
+<section class="experience" id="experience"><div class="content">
+<div class="section-intro"><div><p class="kicker">ONE PLATFORM</p><h2>Everything in one place.</h2><p>A single connection to an authorised provider, with operator-managed transactions.</p></div><div id="operator-badge" class="operator-badge"><span class="dot"></span> Provider not connected</div></div>
+<div class="app"><aside class="sidebar">
+<button class="category active" type="button" data-product="sportsbook" aria-pressed="true"><span class="category-icon">↗</span><span><b>Sportsbook</b><small>Operator-hosted experience</small></span></button>
+<button class="category" type="button" data-product="casino" aria-pressed="false"><span class="category-icon">✦</span><span><b>Casino</b><small>Operator-hosted experience</small></span></button>
+<div class="sidebar-info"><div class="sidebar-symbol">◇</div><b>Powered by the operator</b><p>Identity verification, payments and gambling transactions never run on NetNapz servers.</p></div>
+</aside>
+<section class="workspace"><div class="workspace-header"><strong id="product-title">Sportsbook experience</strong><span id="connection-badge">Awaiting approved connection</span></div>
+<div class="placeholder" id="placeholder"><span class="placeholder-logo">✧</span><h3 id="placeholder-title">Preparing the sportsbook connection.</h3><p id="placeholder-desc">The licensed provider must approve this brand and supply its hosted launch URL. There are no simulated betting transactions.</p><span class="pending">◌ Provider connection pending</span></div>
+<iframe id="operator-frame" title="Licensed gambling operator hosted experience" referrerpolicy="strict-origin-when-cross-origin" allow="payment; fullscreen" loading="lazy" hidden></iframe>
+<div class="redirect" id="redirect" hidden><h3>The operator hosts this experience.</h3><p>Continue to the approved operator website to participate.</p><a id="redirect-link" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Open operator experience ↗</a></div>
+<div class="workspace-footer"><span>♢ Player funds stay with the operator</span><a id="external-fallback" href="#" target="_blank" rel="noopener noreferrer" hidden>Open directly ↗</a><a href="#safer">Safer gambling resources ↗</a></div>
+</section></div>
+</div></section>
+<section class="how" id="how"><div><p class="kicker">HOW NETNAPZ PLAY CONNECTS</p><h2>Your brand.<br><em>Their infrastructure.</em></h2><p>Designed for hosted integration, not a copy of someone else's proprietary betting platform.</p></div><div class="steps"><article><b>01</b><div><h3>NetNapz experience</h3><p>Branding, navigation and frontend hosted on Vercel.</p></div></article><article><b>02</b><div><h3>Approved embed or redirect</h3><p>The licensed operator supplies the permitted domain and launch method.</p></div></article><article><b>03</b><div><h3>Operator-managed gambling</h3><p>Registration, KYC, deposits, bets, withdrawals and safer gambling controls remain with the provider.</p></div></article></div></section>
+<section class="safer" id="safer"><div><p class="kicker">PLAY RESPONSIBLY</p><h2>18+ only. Know your limits.</h2><p>Gambling involves financial risk. This preview does not offer gambling services. Real-money features require approval and operation by a properly licensed provider.</p></div><div class="safer-links"><a href="https://www.gamcare.org.uk/" target="_blank" rel="noopener noreferrer">GamCare ↗</a><a href="https://www.gamstop.co.uk/" target="_blank" rel="noopener noreferrer">GAMSTOP ↗</a><a href="https://www.gamblingcommission.gov.uk/public-register/businesses" target="_blank" rel="noopener noreferrer">UKGC register ↗</a></div></section>
+</main><footer><span class="footer-logo">NETNAPZ <b>PLAY</b></span><p>This is a technical preview, not a gambling website. Any future real-money services must be provided by the named licensed operator under an approved arrangement.</p><span id="year"></span></footer>
+</body></html>
