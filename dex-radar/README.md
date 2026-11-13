@@ -10,7 +10,7 @@ A **separate**, independent NetNapz-branded on-chain scanner concept, built on i
 - Canvas OHLC chart generated exclusively from the selected pool's API candles.
 - Search within the displayed pool results, favorites persisted in the browser, and 45-second refresh while visible.
 - External **Buy / Sell** routes to Jupiter (Solana), PancakeSwap (BNB), or Uniswap (other listed EVM chains), with token mint copy. **Swaps happen on those services, not within Radar.**
-- Token launch preparation and a link to the **official Pump.fun create page**. **Token creation is performed on Pump.fun, not within Radar.**
+- Token launch preparation, **recent Pump.fun token feed** from Jupiter Tokens V2, and a link to the **official Pump.fun create page**. **Token creation is performed on Pump.fun, not within Radar.**
 - Honest provider / freshness / security notices and no simulated prices, wallets, orders, or token launches.
 
 ## Market data
