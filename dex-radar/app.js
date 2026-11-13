@@ -232,6 +232,7 @@ function setPage(page){
  $('section-title').textContent=page==='new'?'Fresh / New pools':page==='trending'?'Trending / Gainers':page==='watchlist'?'Your / Watchlist':'Discover / Markets';
  document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===state.view));
  $('sidebar').classList.remove('is-open');
+ if(isLaunch)void loadPumpLaunches();
  if(!isLaunch){renderTable();if(!state.pools.length||page==='new'||page==='trending')loadPools()}
 }
 function setChain(chain){
@@ -252,6 +253,27 @@ function setView(view){
  $('breadcrumb').textContent='Discover';$('section-title').textContent=view==='new'?'Fresh / New pairs':view==='trending'?'Trending / Gainers':view==='pump'?'Pump / Indexed pools':view==='liquidity'?'Deep / Liquidity':'Discover / Markets';
  loadPools();
 }
+let launchesLoading=false,lastLaunchUpdate=0;
+async function loadPumpLaunches(force=false){
+ const box=$('pump-launch-feed');if(!box||launchesLoading||(!force&&Date.now()-lastLaunchUpdate<30000))return;
+ launchesLoading=true;const refresh=$('refresh-launches');if(refresh)refresh.disabled=true;
+ box.innerHTML='<div class="feed-loading"><span class="loading-orbit"></span> Discovering recent Pump.fun tokens…</div>';
+ try{
+  const resp=await getData({chain:'solana',type:'launches'});
+  const list=Array.isArray(resp.data)?resp.data:[];
+  lastLaunchUpdate=Date.now();
+  if(!list.length){
+   box.innerHTML='<div class="feed-loading">No Pump.fun launches were returned in this provider snapshot. Try Refresh later.</div>';return;
+  }
+  box.innerHTML=list.map(t=>{
+   const mint=String(t.id||''),name=String(t.name||t.symbol||'Unnamed token');
+   const link='https://pump.fun/coin/'+encodeURIComponent(mint);
+   return '<article class="launch-token"><div class="launch-token-logo">'+escape(String(t.symbol||'?').slice(0,1))+'</div><div class="launch-token-main"><h3>'+escape(t.symbol||shortAddr(mint))+(t.isVerified?'<span class="verified-mark">✓ Verified</span>':'')+'</h3><p>'+escape(name)+' · '+age(t.createdAt)+'</p><small title="'+escape(mint)+'">'+escape(shortAddr(mint))+'</small></div><div class="launch-token-data"><strong>'+priceText(t.usdPrice)+'</strong><small>'+amount(t.liquidity)+' liquidity</small></div><a class="launch-token-open" href="'+escape(link)+'" target="_blank" rel="noopener noreferrer">Open ↗</a></article>';
+  }).join('');
+ }catch(e){
+  box.innerHTML='<div class="feed-loading">Launch data unavailable: '+escape(String(e?.message||e).slice(0,180))+'</div>';
+ }finally{launchesLoading=false;if(refresh)refresh.disabled=false}
+}
 function init(){
  document.querySelectorAll('[data-chain]').forEach(b=>{b.classList.toggle('selected',b.dataset.chain===state.chain);b.onclick=()=>setChain(b.dataset.chain)});
  document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>setPage(b.dataset.page));
@@ -265,6 +287,7 @@ function init(){
  $('search').addEventListener('input',e=>{state.query=e.target.value;clearTimeout(state.searchTimer);state.searchTimer=setTimeout(renderTable,120)});
  $('search').addEventListener('keydown',e=>{if(e.key==='Escape'){$('search').value='';state.query='';renderTable()}});
  window.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement?.tagName!=='INPUT'&&document.activeElement?.tagName!=='TEXTAREA'){e.preventDefault();$('search').focus()}});
+ $('refresh-launches').onclick=()=>loadPumpLaunches(true);
  $('copy-launch').onclick=()=>{
   const name=$('launch-name').value.trim(),symbol=$('launch-symbol').value.trim().toUpperCase(),description=$('launch-description').value.trim();
   if(!name||!symbol){toast('Enter a token name and symbol first');return}
