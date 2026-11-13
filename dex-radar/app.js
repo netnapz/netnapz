@@ -91,8 +91,29 @@ function renderTable(){
  });
 }
 function updateWatchCount(){$('watch-count').textContent=state.favorites.size}
+async function enrichSolanaTokens(request,chain){
+ if(chain!=='solana'||Date.now()<state.metadataRetryAt)return;
+ const ids=[...new Set(state.pools.flatMap(p=>tokensOf(p.original).map(t=>String(t.id||t.address||''))))]
+ .filter(id=>/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(id)&&!state.metadata[id]&&!KNOWN_TOKENS[id]).slice(0,90);
+ if(!ids.length)return;
+ try{
+  const response=await getData({chain,type:'metadata',mints:ids.join(',')});
+  if(request!==state.stamp||chain!==state.chain)return;
+  if(Array.isArray(response.data)){
+   for(const token of response.data){
+    const id=String(token.id||'');
+    if(!ids.includes(id)||!token.symbol)continue;
+    state.metadata[id]={symbol:String(token.symbol).slice(0,22),name:String(token.name||token.symbol).slice(0,75),isVerified:token.isVerified===true};
+   }
+   state.pools=state.pools.map(p=>normalise(p.original,chain));
+   const selected=state.pools.find(p=>keyFor(p)===state.selectedId);
+   if(selected){state.selected=selected;renderDetail(selected,{keepChart:true})}
+   renderTable();
+  }
+ }catch(e){state.metadataRetryAt=Date.now()+180000}
+}
 async function loadPools({silent=false}={}){
- if(state.loading)return;
+ if(state.loading&&silent)return;
  const chain=state.chain,view=state.view,request=++state.stamp;state.loading=true;state.status='loading';
  if(!silent){$('markets-body').innerHTML='<tr><td colspan="10" class="loading-cell"><span class="loading-orbit"></span>Loading '+escape(CHAINS[chain])+' pool data…</td></tr>'}
  displayStatus('Updating pools');
@@ -102,6 +123,7 @@ async function loadPools({silent=false}={}){
   if(request!==state.stamp||chain!==state.chain)return;
   const values=Array.isArray(result.data?.results)?result.data.results:Array.isArray(result.data?.pools)?result.data.pools:Array.isArray(result.data)?result.data:[];
   state.pools=values.map(p=>normalise(p,chain)).filter(Boolean);
+  if(chain==='solana')void enrichSolanaTokens(request,chain);
   state.asOf=result.asOf;state.status='ok';displayStatus('Pools available');
   $('updated').textContent='Updated '+since(result.asOf)+' · Auto refresh 45s';
   renderTable();
@@ -115,7 +137,7 @@ async function loadPools({silent=false}={}){
   $('updated').textContent='Provider unavailable · try Refresh';
   if(!silent||!state.pools.length){state.pools=[];renderTable()}
   toast(String(e?.message||e).slice(0,160));
- }finally{state.loading=false;$('refresh').disabled=false}
+ }finally{if(request===state.stamp){state.loading=false;$('refresh').disabled=false}}
 }
 function selectPool(p){
  state.selected=p;state.selectedId=keyFor(p);state.chart=null;renderDetail(p);
