@@ -15,6 +15,33 @@ module.exports=async function handler(req,res){
  const chain=String(query.chain||'solana').toLowerCase();
  if(!CHAINS.has(chain))return res.status(400).json({error:'Unsupported network'});
  const type=String(query.type||'list').toLowerCase();
+ // Public metadata lookup only: resolve at most 90 Solana mints in one call.
+ // Never use a user-supplied origin or execute wallet operations.
+ if(type==='metadata'){
+  if(chain!=='solana')return res.status(400).json({error:'This metadata lookup is Solana-only'});
+  const mints=[...new Set(String(query.mints||'').split(',').filter(v=>/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(v)))].slice(0,90);
+  if(!mints.length)return res.status(400).json({error:'No valid Solana mint addresses'});
+  const acMeta=new AbortController(),timerMeta=setTimeout(()=>acMeta.abort(),11000);
+  try{
+   const headers={'Accept':'application/json'};
+   if(process.env.JUPITER_API_KEY)headers['x-api-key']=process.env.JUPITER_API_KEY;
+   const url='https://api.jup.ag/tokens/v2/search?query='+encodeURIComponent(mints.join(','));
+   let response=await fetch(url,{headers,signal:acMeta.signal});
+   if(!response.ok&&!process.env.JUPITER_API_KEY&&[401,403,429].includes(response.status)){
+    response=await fetch('https://lite-api.jup.ag/tokens/v2/search?query='+encodeURIComponent(mints.join(',')),{headers:{'Accept':'application/json'},signal:acMeta.signal});
+   }
+   if(!response.ok)return res.status(503).json({error:'Token metadata source unavailable ('+response.status+')',source:'Jupiter Tokens V2'});
+   const json=await response.json();if(!Array.isArray(json))throw Error('Unexpected token metadata response');
+   const allow=new Set(mints);
+   const tokens=json.filter(t=>allow.has(String(t.id||''))).map(t=>({
+    id:String(t.id),symbol:String(t.symbol||'').slice(0,22),name:String(t.name||'').slice(0,75),
+    isVerified:t.isVerified===true,icon:typeof t.icon==='string'&&t.icon.startsWith('https://')?t.icon:null
+   }));
+   res.setHeader('Cache-Control','s-maxage=180, stale-while-revalidate=240');
+   return res.status(200).json({source:'Jupiter Tokens V2',chain,asOf:new Date().toISOString(),type,data:tokens});
+  }catch(e){return res.status(503).json({error:'Token metadata temporarily unavailable: '+String(e?.message||e).slice(0,120),source:'Jupiter Tokens V2'})}
+  finally{clearTimeout(timerMeta)}
+ }
  const params=new URLSearchParams();
  let path;
  if(type==='list'){
