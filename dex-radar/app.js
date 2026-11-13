@@ -4,8 +4,14 @@
 (()=>{
 const $=id=>document.getElementById(id);
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const BASE='https://jup.ag/swap',PUMP='https://pump.fun/create',CHAINS={solana:'Solana',base:'Base',ethereum:'Ethereum',arbitrum:'Arbitrum',bsc:'BNB Chain',polygon:'Polygon'};
-const state={chain:'solana',view:'volume',page:'discover',pools:[],selected:null,selectedId:'',interval:'1h',status:'starting',minLiquidity:50000,query:'',asOf:null,loading:false,poolDetails:null,chart:null,favorites:new Set(),timer:null,searchTimer:null,stamp:0};
+const BASE='https://jup.ag/swap',PUMP='https://pump.fun/create';
+const KNOWN_TOKENS={
+ 'So11111111111111111111111111111111111111112':{symbol:'SOL',name:'Wrapped SOL'},
+ 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v':{symbol:'USDC',name:'USD Coin'},
+ 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB':{symbol:'USDT',name:'Tether USD'}
+};
+const CHAINS={solana:'Solana',base:'Base',ethereum:'Ethereum',arbitrum:'Arbitrum',bsc:'BNB Chain',polygon:'Polygon'};
+const state={chain:'solana',view:'volume',page:'discover',pools:[],selected:null,selectedId:'',interval:'1h',status:'starting',minLiquidity:50000,query:'',asOf:null,loading:false,poolDetails:null,chart:null,favorites:new Set(),timer:null,searchTimer:null,stamp:0,metadata:Object.create(null),metadataRetryAt:0};
 try{const settings=JSON.parse(localStorage.getItem('netnapzDexRadar')||'{}');if(Array.isArray(settings.favorites))state.favorites=new Set(settings.favorites.filter(x=>typeof x==='string'&&x.length<180).slice(0,250));if(CHAINS[settings.chain])state.chain=settings.chain;if([0,10000,50000,100000,1000000].includes(settings.minLiquidity))state.minLiquidity=settings.minLiquidity}catch{}
 function save(){try{localStorage.setItem('netnapzDexRadar',JSON.stringify({chain:state.chain,minLiquidity:state.minLiquidity,favorites:[...state.favorites]}))}catch{}}
 function toNumber(x){const n=Number(x);return Number.isFinite(n)?n:null}
@@ -18,13 +24,17 @@ function age(ts){if(!ts)return '—';const ms=Date.parse(ts);if(!Number.isFinite
 function since(ts){if(!ts)return '—';const n=Date.parse(ts);return Number.isFinite(n)?new Date(n).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}):'—'}
 function tokensOf(raw){return Array.isArray(raw?.tokens)?raw.tokens:[]}
 function normalise(raw,chain){
- const tokens=tokensOf(raw),stable=['USDC','USDT','DAI','USD1','USDS','USDE'],first=tokens.find(t=>t?.symbol&&!stable.includes(String(t.symbol).toUpperCase()))||tokens[0]||{};
+ const tokens=tokensOf(raw),stable=['USDC','USDT','DAI','USD1','USDS','USDE'];
+ const mintId=t=>String(t?.id||t?.address||t?.token_address||'');
+ const metaOf=t=>state.metadata[mintId(t)]||KNOWN_TOKENS[mintId(t)]||t||{};
+ const first=tokens.find(t=>!stable.includes(String(metaOf(t).symbol||'').toUpperCase()))||tokens[0]||{};
  const second=tokens.find(t=>t!==first)||tokens[1]||{};
- const mint=String(first.id||first.address||first.token_address||'');
+ const mint=mintId(first),quoteMint=mintId(second);
  const pool=String(raw.id||raw.pool_address||raw.address||'');
  if(!pool)return null;
- const symbol=String(first.symbol||'TOKEN').slice(0,22),quote=String(second.symbol||'USD').slice(0,22);
- return {id:pool,chain:raw.chain||raw.network||chain,market:symbol+'/'+quote,symbol,quote,name:String(first.name||symbol).slice(0,65),
+ const symbol=String(metaOf(first).symbol||shortAddr(mint)||'Unknown').slice(0,22);
+ const quote=String(metaOf(second).symbol||shortAddr(quoteMint)||'Quote').slice(0,22);
+ return {id:pool,chain:raw.chain||raw.network||chain,market:symbol+'/'+quote,symbol,quote,name:String(metaOf(first).name||symbol).slice(0,65),verified:metaOf(first).isVerified===true,
   mint,dex:String(raw.dex_name||raw.dex_id||'DEX').slice(0,52),price:toNumber(raw.price_usd),change5:toNumber(raw.price_change_percentage_5m),change1:toNumber(raw.price_change_percentage_1h),change24:toNumber(raw.price_change_percentage_24h),
   volume:toNumber(raw.volume_usd_24h),liquidity:toNumber(raw.liquidity_usd),transactions:toNumber(raw.transactions_24h??raw.txns_24h),
   created:raw.created_at||null,original:raw};
