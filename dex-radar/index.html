@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d12"><meta name="description" content="NETNAPZ DEX RADAR — independent Solana-first token and pool discovery, trading routes and token launch tools.">
+<title>NETNAPZ DEX RADAR | Discover • Trade • Launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head><body>
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+ <a class="brand" href="/" aria-label="NetNapz DEX Radar Home"><span class="brand-icon">N<span>✴</span></span><span class="brand-word">NETNAPZ<b>RADAR</b><small>ON-CHAIN INTELLIGENCE</small></span></a>
+ <div class="side-section">WORKSPACE</div>
+ <nav class="sidenav" aria-label="Primary navigation">
+  <button class="side-link active" data-page="discover"><span class="ico">◈</span> Discover <span class="side-arrow">↗</span></button>
+  <button class="side-link" data-page="new"><span class="ico">✳</span> New pairs</button>
+  <button class="side-link" data-page="trending"><span class="ico">↗</span> Trending</button>
+  <button class="side-link" data-page="watchlist"><span class="ico">☆</span> Watchlist <span id="watch-count" class="nav-counter">0</span></button>
+  <button class="side-link" data-page="launch"><span class="ico">✺</span> Launchpad</button>
+ </nav>
+ <div class="side-section chain-title">NETWORKS</div>
+ <div class="chain-nav" id="chain-nav">
+  <button data-chain="solana" class="selected"><span class="chain-dot solana">◎</span> Solana <span class="chain-indicator">●</span></button>
+  <button data-chain="base"><span class="chain-dot base">◉</span> Base</button>
+  <button data-chain="ethereum"><span class="chain-dot ethereum">◆</span> Ethereum</button>
+  <button data-chain="arbitrum"><span class="chain-dot arbitrum">≋</span> Arbitrum</button>
+  <button data-chain="bsc"><span class="chain-dot bsc">⬡</span> BNB Chain</button>
+  <button data-chain="polygon"><span class="chain-dot polygon">⬢</span> Polygon</button>
+ </div>
+ <div class="sidebar-bottom">
+  <div class="feed-note"><span class="feed-live"></span><div><strong>On-chain pool data</strong><small>DexPaprika • refreshed every 45s</small></div></div>
+  <a href="https://netnapz.com/" target="_blank" rel="noopener noreferrer" class="side-external">← NETNAPZ HOMEPAGE <span>↗</span></a>
+  <a href="https://trade.netnapz.com/" target="_blank" rel="noopener noreferrer" class="side-external">NETNAPZTRADE <span>↗</span></a>
+ </div>
+</aside>
+<div class="content">
+ <header class="topbar"><button id="mobile-nav" class="mobile-nav" aria-label="Toggle menu">☰</button>
+  <div class="top-crumb"><b>DEX RADAR</b><span>/</span><span id="breadcrumb">Discover</span></div>
+  <label class="global-search"><span class="search-symbol">⌕</span><input id="search" type="search" placeholder="Search token, pair or contract…" maxlength="120" autocomplete="off"><kbd>/</kbd></label>
+  <div class="top-actions"><span class="status-small"><i></i> <span id="network-status">Connecting</span></span><a href="https://pump.fun/create" target="_blank" rel="noopener noreferrer" class="btn btn-acid top-launch">✳ Launch token <span>↗</span></a></div>
+ </header>
+ <main>
+ <section class="hero" id="hero"><div class="hero-glow"></div><div class="hero-copy"><div class="eyebrow"><span class="ping"></span> THE MARKET NEVER SLEEPS. NEITHER DO WE.</div><h1>See the signal.<br><em>Catch the move.</em></h1><p>Spot emerging pairs, follow liquidity and momentum, and move from discovery to your next trade.</p><div class="hero-buttons"><button class="btn btn-acid" id="hero-discover">Explore markets <span>↗</span></button><button class="btn btn-outline" id="hero-launch">Launch on Pump.fun <span>↗</span></button></div></div>
+  <div class="radar-art" aria-hidden="true"><div class="rings ring1"></div><div class="rings ring2"></div><div class="rings ring3"></div><div class="sweep"></div><div class="radar-center">✳</div><span class="art-pip one"></span><span class="art-pip two"></span><span class="art-pip three"></span></div>
+ </section>
+ <div class="metric-row"><div class="metric"><div class="metric-label">TRACKED POOLS <span>▧</span></div><strong id="stat-pools">—</strong><small>Current result set</small></div><div class="metric"><div class="metric-label">24H VOLUME <span>↗</span></div><strong id="stat-volume">—</strong><small>Across listed pools</small></div><div class="metric"><div class="metric-label">TOTAL LIQUIDITY <span>◈</span></div><strong id="stat-liquidity">—</strong><small>Across listed pools</small></div><div class="metric"><div class="metric-label">BIGGEST 24H MOVER <span>⚡</span></div><strong id="stat-mover">—</strong><small id="stat-mover-name">Based on selected pools</small></div></div>
+ <section class="scanner-section" id="scanner-section"><div class="section-bar"><div><div class="section-kicker">◎ MARKET INTELLIGENCE</div><h2 id="section-title">Discover <span class="acid">/</span> Markets</h2></div><div class="updated-label"><span class="pulsing-dot"></span><span id="updated">Connecting to data source…</span></div></div>
+  <div class="filters"><div class="filter-tabs" id="filter-tabs"><button data-view="volume" class="active">Top volume</button><button data-view="new">✳ New pairs</button><button data-view="trending">↗ Gainers</button><button data-view="liquidity">Liquidity</button><button data-view="pump">Pump ecosystem</button></div><div class="filter-right"><label>Min liquidity <select id="min-liquidity"><option value="0">All</option><option value="10000">$10K+</option><option value="50000" selected>$50K+</option><option value="100000">$100K+</option><option value="1000000">$1M+</option></select></label><button id="refresh" title="Refresh market data">⟳ Refresh</button></div></div>
+  <div class="market-frame"><div class="table-wrap"><table class="markets-table"><thead><tr><th>#</th><th>PAIR / DEX</th><th>PRICE</th><th>5M</th><th>1H</th><th>24H</th><th>24H VOL.</th><th>LIQUIDITY</th><th>AGE</th><th class="action-col">SAVE</th></tr></thead><tbody id="markets-body"><tr><td colspan="10" class="loading-cell"><span class="loading-orbit"></span>Connecting to live pool data…</td></tr></tbody></table></div><footer class="table-footer"><span id="result-count">Waiting for data</span><span>Prices and metrics are supplied by DexPaprika. Not an execution feed.</span></footer></div>
+ </section>
+ <section class="launch-section" id="launch-section" hidden><div class="section-kicker">✳ THE NEXT GENERATION OF TOKENS</div><div class="launch-header"><div><h2>Launch something <span class="acid">new.</span></h2><p>Prepare a token concept and continue to the official Pump.fun token creation page to connect your wallet and sign the launch.</p></div><div class="launch-orb">✳</div></div><div class="launch-cols"><div class="launch-card"><h3>Token launch checklist</h3><label>Token name <input id="launch-name" type="text" placeholder="Your coin name" maxlength="50"></label><label>Symbol <input id="launch-symbol" type="text" placeholder="e.g. NAPZ" maxlength="12"></label><label>Description <textarea id="launch-description" placeholder="Tell people what makes it special" maxlength="500" rows="4"></textarea></label><div class="launch-actions"><button id="copy-launch" class="btn btn-outline">Copy details</button><a class="btn btn-acid" href="https://pump.fun/create" target="_blank" rel="noopener noreferrer">Continue to Pump.fun ↗</a></div><p class="muted small">Token creation takes place on Pump.fun, not inside this scanner. You must review the full terms, fees and transaction in your wallet.</p></div><div class="launch-explain"><div class="launch-step"><span>01</span><div><h3>Design</h3><p>Choose a name, symbol, image, description and social accounts.</p></div></div><div class="launch-step"><span>02</span><div><h3>Launch</h3><p>Open Pump.fun, connect a Solana wallet, and authorise the token creation transaction.</p></div></div><div class="launch-step"><span>03</span><div><h3>Discover</h3><p>Watch the token's pool metrics after data providers begin indexing the pool. Bonding-curve tokens may not appear immediately.</p></div></div><p class="risk">High-risk assets: token launches may have little liquidity and can lose their entire value. Verify addresses and permissions before signing.</p></div></div></section>
+ <footer class="main-footer"><span>© NETNAPZ DEX RADAR · Independent token discovery</span><span>Data: <a href="https://dexpaprika.com/" target="_blank" rel="noopener noreferrer">DexPaprika</a> · Trading: <a href="https://jup.ag/swap" target="_blank" rel="noopener noreferrer">Jupiter</a> · Launches: <a href="https://pump.fun/create" target="_blank" rel="noopener noreferrer">Pump.fun</a></span></footer>
+ </main>
+</div>
+<aside class="detail-panel" id="detail-panel"><div class="detail-header"><span>◈ POOL EXPLORER</span><button id="close-detail" title="Close pool panel">×</button></div><div id="pool-panel-content" class="pool-panel-content"><div class="detail-placeholder"><div class="placeholder-orbit">◈</div><h3>Inspect any pool</h3><p>Select a market to examine its chart, trading activity, liquidity and contract address.</p></div></div></aside>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+</body></html>
