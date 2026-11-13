@@ -17,6 +17,34 @@ module.exports=async function handler(req,res){
  const type=String(query.type||'list').toLowerCase();
  // Public metadata lookup only: resolve at most 90 Solana mints in one call.
  // Never use a user-supplied origin or execute wallet operations.
+ if(type==='launches'){
+  if(chain!=='solana')return res.status(400).json({error:'Launch feed is Solana-only'});
+  const acLaunch=new AbortController(),launchTimeout=setTimeout(()=>acLaunch.abort(),11000);
+  try{
+   const headers={'Accept':'application/json'};
+   if(process.env.JUPITER_API_KEY)headers['x-api-key']=process.env.JUPITER_API_KEY;
+   let response=await fetch('https://api.jup.ag/tokens/v2/recent',{headers,signal:acLaunch.signal});
+   if(!response.ok&&!process.env.JUPITER_API_KEY&&[401,403,429].includes(response.status)){
+    response=await fetch('https://lite-api.jup.ag/tokens/v2/recent',{headers:{Accept:'application/json'},signal:acLaunch.signal});
+   }
+   if(!response.ok)return res.status(503).json({error:'Recent launches unavailable from provider ('+response.status+')',source:'Jupiter Tokens V2'});
+   const values=await response.json();
+   if(!Array.isArray(values))throw Error('Unexpected recent-launch response');
+   const launches=values.filter(v=>String(v.launchpad||'').toLowerCase()==='pump.fun')
+     .slice(0,30).map(v=>({
+      id:String(v.id||''),name:String(v.name||'').slice(0,90),symbol:String(v.symbol||'').slice(0,22),
+      createdAt:v.createdAt||v.firstPool?.createdAt||null,usdPrice:Number.isFinite(Number(v.usdPrice))?Number(v.usdPrice):null,
+      liquidity:Number.isFinite(Number(v.liquidity))?Number(v.liquidity):null,
+      mcap:Number.isFinite(Number(v.mcap))?Number(v.mcap):null,
+      holderCount:Number.isFinite(Number(v.holderCount))?Number(v.holderCount):null,
+      isVerified:v.isVerified===true,graduated:Boolean(v.graduatedPool),
+      launchpad:String(v.launchpad||'')
+     })).filter(v=>/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(v.id));
+   res.setHeader('Cache-Control','s-maxage=25, stale-while-revalidate=45');
+   return res.status(200).json({source:'Jupiter Tokens V2',asOf:new Date().toISOString(),chain,type,data:launches});
+  }catch(e){return res.status(503).json({error:'Recent launch data unavailable: '+String(e?.message||e).slice(0,115),source:'Jupiter Tokens V2'})}
+  finally{clearTimeout(launchTimeout)}
+ }
  if(type==='metadata'){
   if(chain!=='solana')return res.status(400).json({error:'This metadata lookup is Solana-only'});
   const mints=[...new Set(String(query.mints||'').split(',').filter(v=>/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(v)))].slice(0,90);
