@@ -228,7 +228,7 @@ function setPage(page){
  $('breadcrumb').textContent=page==='new'?'New pairs':page==='trending'?'Trending':page==='watchlist'?'Watchlist':page==='launch'?'Launchpad':'Discover';
  const isLaunch=page==='launch';$('hero').hidden=isLaunch;document.querySelector('.metric-row').hidden=isLaunch;
  $('scanner-section').hidden=isLaunch;$('launch-section').hidden=!isLaunch;
- if(page==='new')state.view='new';else if(page==='trending')state.view='trending';else if(page==='watchlist')state.view='watchlist';else if(page==='discover'&&state.view==='watchlist')state.view='volume';
+ if(page==='new'){state.view='new';state.minLiquidity=0;$('min-liquidity').value='0'}else if(page==='trending')state.view='trending';else if(page==='watchlist')state.view='watchlist';else if(page==='discover'&&state.view==='watchlist')state.view='volume';
  $('section-title').textContent=page==='new'?'Fresh / New pools':page==='trending'?'Trending / Gainers':page==='watchlist'?'Your / Watchlist':'Discover / Markets';
  document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===state.view));
  $('sidebar').classList.remove('is-open');
@@ -245,7 +245,9 @@ function setChain(chain){
 function setView(view){
  if(!['volume','new','trending','liquidity','pump'].includes(view))return;
  if(view==='pump'&&state.chain!=='solana'){toast('Pump ecosystem view is Solana-only');setChain('solana')}
- state.page='discover';state.view=view;document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page==='discover'));
+ state.page='discover';state.view=view;
+ if(view==='new'||view==='pump'){state.minLiquidity=0;$('min-liquidity').value='0'}
+ document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page==='discover'));
  document.querySelectorAll('[data-view]').forEach(el=>el.classList.toggle('active',el.dataset.view===view));
  $('breadcrumb').textContent='Discover';$('section-title').textContent=view==='new'?'Fresh / New pairs':view==='trending'?'Trending / Gainers':view==='pump'?'Pump / Indexed pools':view==='liquidity'?'Deep / Liquidity':'Discover / Markets';
  loadPools();
